@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "mysqlmysql",
+    password: "yulia",
     database: "employee_tracker_db"
 });
 
@@ -87,7 +87,7 @@ function allEmployee() {
         console.log(output);
         runSearch();
     });
-    
+
 }
 
 function viewByDepartment() {
