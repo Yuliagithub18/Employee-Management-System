@@ -8,7 +8,7 @@ PRIMARY KEY(id),
 department VARCHAR(30)
 );
 
-CREATE TABLE role (
+CREATE TABLE employeeRole (
 id INT NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (id),
 title VARCHAR(30),
@@ -31,10 +31,10 @@ id INT NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (id),
 first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
-role_id INTEGER NOT NULL,
-CONSTRAINT fk_role_id
-FOREIGN KEY (role_id)
-    REFERENCES role(id)
+employeeRole_id INTEGER NOT NULL,
+CONSTRAINT fk_employeeRole_id
+FOREIGN KEY (employeeRole_id)
+    REFERENCES employeeRole(id)
     ON UPDATE CASCADE,
 manager_id INTEGER,
 CONSTRAINT fk_manager_id
@@ -48,12 +48,12 @@ VALUES
 ('Sales'),
 ('HR');
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO employeeRole (title, salary, department_id)
 VALUES
-('Sales lead', 70,000, 1),
-('HR lead', 40,000, 2),
-('Sales assistant', 35,000, 1),
-('HR assistant', 45,000, 2);
+('Sales lead', 70000, 1),
+('HR lead', 40000, 2),
+('Sales assistant', 35000, 1),
+('HR assistant', 45000, 2);
 
 INSERT INTO manager (manager)
 VALUES
@@ -61,7 +61,7 @@ VALUES
 ('Jill'),
 ('Jennifer');
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employee (first_name, last_name, employeeRole_id, manager_id)
 VALUES
 ("Yulia", "Che", 1, 1),
 ("Jill","Black", 2, 1),
@@ -73,21 +73,23 @@ VALUES
 
 SELECT * FROM employee_tracker_db.employee;
 
-SELECT * FROM employee_tracker_db.role;
+SELECT * FROM employee_tracker_db.employeeRole;
 
 SELECT * FROM employee_tracker_db.department;
 
 SELECT * FROM employee_tracker_db.manager;
+
+
 SELECT
-id, first_name, last_name, title, department, salary, manager
+first_name, last_name, title, department, salary, manager
 FROM
 employee
 INNER JOIN
-role USING (id)
+manager using (id)
+INNER JOIN
+employeeRole USING (id)
 INNER JOIN
 department USING (id)
-INNER JOIN
-role using (id)
 ORDER BY
 id;
 

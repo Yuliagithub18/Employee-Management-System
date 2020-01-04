@@ -70,11 +70,7 @@ function runSearch() {
 
 function allEmployee() {
 
-    var query = "SELECT employeeTableAlias.id, employeeTableAlias.first_name, employeeTableAlias.last_name, roleTableAlias.salary, roleTableAlias.title, managerTableAlias.manager, departmentTableAlias.department " +
-        "FROM employee_tracker_db.employee employeeTableAlias " +
-        "INNER JOIN employee_tracker_db.role roleTableAlias ON employeeTableAlias.role_id=roleTableAlias.id " +
-        "INNER JOIN employee_tracker_db.manager managerTableAlias ON employeeTableAlias.manager_id=managerTableAlias.id " +
-        "inner join employee_tracker_db.department departmentTableAlias on roleTableAlias.department_id=departmentTableAlias.id;";
+    var query = "SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.name as 'Department', employee_role.salary, (SELECT CONCAT(employee.first_name, employee.last_name) FROM employee where employee.manager_id = employee.id ) as 'Manager' FROM employee join employee_role on employee.role_id = employee_role.id join department on department.id = employee_role.department_id;";
 
     connection.query(query, function (err, res) {
         var output = ''
@@ -91,38 +87,45 @@ function allEmployee() {
 }
 
 function viewByDepartment() {
-
-    inquirer
-        .prompt([
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err
+        var departmentChoices = [];
+        for (i = 0; i < res.length; i++) {
+            departmentChoices.push(res[i].department)
+        }
+        inquirer.prompt([
             {
                 name: "departmentName",
-                type: "input",
-                message: "Enter the department name (Sales or HR): ",
+                type: "list",
+                message: "Select a department to view the employees",
+                choices: departmentChoices
             }
         ])
-        .then(function (answer) {
+            .then(function ({ departmentName }) {
 
-            var query = "SELECT employeeTableAlias.id, employeeTableAlias.first_name, employeeTableAlias.last_name, roleTableAlias.salary, roleTableAlias.title, managerTableAlias.manager, departmentTableAlias.department " +
-                "FROM employee_tracker_db.employee employeeTableAlias " +
-                "INNER JOIN employee_tracker_db.role roleTableAlias ON employeeTableAlias.role_id=roleTableAlias.id " +
-                "INNER JOIN employee_tracker_db.manager managerTableAlias ON employeeTableAlias.manager_id=managerTableAlias.id " +
-                "inner join employee_tracker_db.department departmentTableAlias on roleTableAlias.department_id=departmentTableAlias.id " +
-                "Where departmentTableAlias.department = ?";
+                var query = "SELECT employeeTableAlias.id, employeeTableAlias.first_name, employeeTableAlias.last_name, roleTableAlias.salary, roleTableAlias.title, managerTableAlias.manager, departmentTableAlias.department " +
+                    "FROM employee_tracker_db.employee employeeTableAlias " +
+                    "INNER JOIN employee_tracker_db.role roleTableAlias ON employeeTableAlias.role_id=roleTableAlias.id " +
+                    "INNER JOIN employee_tracker_db.manager managerTableAlias ON employeeTableAlias.manager_id=managerTableAlias.id " +
+                    "inner join employee_tracker_db.department departmentTableAlias on roleTableAlias.department_id=departmentTableAlias.id " +
+                    "Where departmentTableAlias.department = ?";
 
-            connection.query(query, [answer.departmentName], function (err, res) {
+                connection.query(query, [departmentName], function (err, res) {
 
-                var output = ''
-                console.log("-------------------------------------------------------------------------------")
-                console.log("ID" + "\t" + "FirstName" + "\t" + "LastName" + "\t" + "Title" + "Department" + "\t" + "Salary" + "\t" + "Manager");
-                console.log("-------------------------------------------------------------------------------")
-                for (var i = 0; i < res.length; i++) {
-                    output = (output + res[i].id + "\t" + res[i].first_name + "\t\t" + res[i].last_name + "\t\t" + res[i].title + "\t" + res[i].department + "\t" + res[i].salary + "\t" + res[i].manager + "\n");
-                }
-                console.log(output);
-                runSearch();
-            });
-        }
-        )
+                    var output = ''
+                    console.log("-------------------------------------------------------------------------------")
+                    console.log("ID" + "\t" + "FirstName" + "\t" + "LastName" + "\t" + "Title" + "Department" + "\t" + "Salary" + "\t" + "Manager");
+                    console.log("-------------------------------------------------------------------------------")
+                    for (var i = 0; i < res.length; i++) {
+                        output = (output + res[i].id + "\t" + res[i].first_name + "\t\t" + res[i].last_name + "\t\t" + res[i].title + "\t" + res[i].department + "\t" + res[i].salary + "\t" + res[i].manager + "\n");
+                    }
+                    console.log(output);
+                    runSearch();
+                });
+            }
+            )
+    }
+    )
 }
 
 function viewByManager() {
