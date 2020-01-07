@@ -249,7 +249,7 @@ function updateManager() {
             {
                 name: 'newManagerid',
                 type: 'input',
-                message: "What is employee's new manager id (press 1 for Bob, 2 for Helen, 3 for John?"
+                message: "What is employee's new manager id (press 1 for Yulia, 2 for Jill, 3 for Jennifer?"
             }
         ]).then(answer => {
             connection.query(`UPDATE employee SET role_id = ${answer.newManagerid} WHERE id=${answer.id}`, (err, res) => {
