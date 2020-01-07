@@ -135,7 +135,7 @@ function viewByManager() {
             {
                 name: "managerName",
                 type: "input",
-                message: "Enter the department name (Bob, Helen or John): ",
+                message: "Enter the department name (Yulia, Jill or Jennifer): ",
             }
         ])
         .then(function (answer) {

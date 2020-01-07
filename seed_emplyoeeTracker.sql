@@ -50,7 +50,7 @@ VALUES
 
 INSERT INTO employeeRole (title, salary, department_id)
 VALUES
-('Sales lead', 70000, 1),
+('Sales lead', 70000, 2),
 ('HR lead', 40000, 2),
 ('Sales assistant', 35000, 1),
 ('HR assistant', 45000, 2);
